@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarketGap & Logo Expanse - IA & Design Restaurant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: #050505; 
+            color: #ffffff; 
+            overflow-x: hidden; 
+            transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        
+        .cursor { width: 8px; height: 8px; background: #fff; border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transition: transform 0.1s ease; transform: translate(-50%, -50%); mix-blend-mode: difference; }
+        .cursor-follower { width: 35px; height: 35px; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1); transform: translate(-50%, -50%); }
+        
+        .glass { 
+            background: rgba(255, 255, 255, 0.02); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .glass:hover { 
+            background: rgba(255, 255, 255, 0.04);
+            transform: translateY(-8px) scale(1.01); 
+            border-color: rgba(255, 255, 255, 0.15); 
+            box-shadow: 0 20px 40px 0 rgba(0, 0, 0, 0.6);
+        }
+        
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        .bg-glow {
+            position: fixed;
+            width: 60vw;
+            height: 60vw;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            opacity: 0.15;
+            pointer-events: none;
+            transition: all 1.5s ease;
+        }
+
+        .toggle-container { 
+            position: relative; 
+            width: 280px; 
+            height: 56px; 
+            background: rgba(255,255,255,0.03); 
+            border-radius: 100px; 
+            padding: 4px; 
+            border: 1px solid rgba(255,255,255,0.08); 
+            cursor: pointer; 
+            overflow: hidden;
+        }
+        .toggle-slider { 
+            position: absolute; 
+            width: calc(50% - 4px); 
+            height: calc(100% - 8px); 
+            background: #6366f1; 
+            border-radius: 100px; 
+            transition: all 0.6s cubic-bezier(0.68, -0.6, 0.32, 1.6); 
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+        .toggle-labels { position: relative; display: flex; height: 100%; align-items: center; z-index: 2; }
+        .toggle-labels span { flex: 1; text-align: center; font-size: 12px; font-weight: 800; color: #555; transition: color 0.4s; letter-spacing: 0.05em; text-transform: uppercase; }
+        .toggle-labels span.active { color: white; }
+
+        .hidden-content { display: none; opacity: 0; }
+        .visible-content { display: block; animation: sectionFadeIn 1s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        
+        @keyframes sectionFadeIn { 
+            from { opacity: 0; transform: translateY(10px); filter: blur(10px); } 
+            to { opacity: 1; transform: translateY(0); filter: blur(0); } 
+        }
+        
+        .sticky-nav.scrolled { 
+            background: rgba(5, 5, 5, 0.8); 
+            backdrop-filter: blur(15px);
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+        }
+
+        .price-badge { 
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); 
+            padding: 4px 12px; 
+            border-radius: 20px; 
+            font-size: 9px; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            letter-spacing: 0.1em;
+            margin-bottom: 15px; 
+            display: inline-block; 
+        }
+        .price-badge-pink { background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); }
+
+        .text-gradient {
+            background: linear-gradient(to right, #fff 30%, rgba(255,255,255,0.4) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-premium {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .portfolio-card {
+            overflow: hidden;
+            position: relative;
+        }
+        .portfolio-card img {
+            transition: transform 0.8s cubic-bezier(0.2, 0, 0.2, 1);
+        }
+        .portfolio-card:hover img {
+            transform: scale(1.1);
+        }
+        .portfolio-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .portfolio-card:hover .portfolio-overlay {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <div id="glow1" class="bg-glow top-[-10%] left-[-10%] bg-indigo-600/30"></div>
+    <div id="glow2" class="bg-glow bottom-[-10%] right-[-10%] bg-purple-600/20"></div>
+
+    <nav id="nav-bar" class="sticky-nav fixed w-full top-0 z-50 px-8 py-6 transition-all duration-500">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="#" class="text-2xl font-black tracking-tighter group">
+                <span id="brandName" class="text-indigo-500 transition-all duration-700 group-hover:tracking-widest">MARKETGAP</span>
+            </a>
+            
+            <div id="mainNav" class="hidden lg:flex gap-10 text-[10px] uppercase tracking-[0.2em] font-black opacity-70">
+                </div>
+
+            <div class="toggle-container" id="brandToggle">
+                <div class="toggle-slider" id="slider"></div>
+                <div class="toggle-labels">
+                    <span id="labelMG" class="active">MarketGap</span>
+                    <span id="labelLE">Logo Expanse</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="marketgap" class="visible-content">
+        <section class="min-h-screen flex items-center justify-center relative px-6">
+            <div class="max-w-6xl mx-auto text-center z-10">
+                <div class="reveal active inline-block px-4 py-1 border border-indigo-500/30 rounded-full text-[10px] font-bold tracking-widest text-indigo-400 mb-8 uppercase">
+                    Solutions IA Nouvelle Génération
+                </div>
+                <h1 class="text-6xl md:text-[100px] font-black mb-10 leading-[0.9] uppercase text-gradient">
+                    L'IA AU SERVICE DU <br><span class="text-indigo-500">RESTAURANT</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-400 mb-14 max-w-3xl mx-auto font-light leading-relaxed">
+                    Automatisez vos réservations, vos réseaux et votre e-réputation. Concentrez votre talent sur l'assiette, nous gérons le reste.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-6 justify-center items-center reveal active">
+                    <button onclick="scrollToSection('contact', 'Audit')" class="btn-premium px-12 py-6 bg-indigo-600 rounded-full font-black text-xs uppercase tracking-widest hover:bg-indigo-500 transition-all shadow-[0_0_40px_rgba(99,102,241,0.3)]">Démarrer l'audit gratuit</button>
+                    <a href="https://calendar.app.google/exZQ1TwS2367dTBe6" target="_blank" class="px-12 py-6 glass rounded-full font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all">Prendre RDV</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="services" class="py-40">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-24">
+                    <h2 class="text-5xl font-black uppercase tracking-tighter mb-4">L'Agent IA Intelligent</h2>
+                    <div class="w-20 h-1 bg-indigo-500 mx-auto rounded-full"></div>
+                </div>
+                <div class="grid md:grid-cols-3 gap-10">
+                    <div class="glass p-12 rounded-[40px] group">
+                        <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-3xl mb-8 group-hover:scale-110 transition-transform duration-500">📅</div>
+                        <h3 class="text-2xl font-bold mb-5">Réservation Smart</h3>
+                        <p class="text-gray-400 leading-relaxed font-light">Gestion fluide des réservations par voix ou texte, synchronisée en temps réel avec votre logiciel de caisse.</p>
+                    </div>
+                    <div class="glass p-12 rounded-[40px] group">
+                        <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-3xl mb-8 group-hover:scale-110 transition-transform duration-500">💬</div>
+                        <h3 class="text-2xl font-bold mb-5">E-Réputation Auto</h3>
+                        <p class="text-gray-400 leading-relaxed font-light">L'IA analyse le ton et le contenu de chaque avis Google pour y répondre avec pertinence et courtoisie.</p>
+                    </div>
+                    <div class="glass p-12 rounded-[40px] group">
+                        <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-3xl mb-8 group-hover:scale-110 transition-transform duration-500">📈</div>
+                        <h3 class="text-2xl font-bold mb-5">Analyse de Données</h3>
+                        <p class="text-gray-400 leading-relaxed font-light">Prévoyez vos stocks et ajustez vos prix grâce aux prévisions basées sur les tendances locales.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="logoexpanse" class="hidden-content">
+        <section class="min-h-screen flex items-center justify-center relative px-6">
+            <div class="max-w-6xl mx-auto text-center z-10">
+                <div class="reveal active inline-block px-4 py-1 border border-pink-500/30 rounded-full text-[10px] font-bold tracking-widest text-pink-400 mb-8 uppercase">
+                    Esthétique & Identité Visuelle
+                </div>
+                <h1 class="text-7xl md:text-[130px] font-black mb-10 tracking-tighter uppercase italic leading-[0.8] text-gradient">
+                    LOGO <span class="text-pink-500">EXPANSE</span>
+                </h1>
+                <p class="text-xl md:text-3xl text-gray-400 mb-14 font-light max-w-2xl mx-auto leading-relaxed">
+                    Le design qui fait vendre. Redéfinissez l'image de votre restaurant avec l'excellence créative.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-6 justify-center items-center reveal active">
+                    <button onclick="scrollToSection('contact', 'Gratuit LE')" class="btn-premium px-14 py-7 bg-pink-600 rounded-full font-black text-xs uppercase tracking-widest hover:bg-pink-500 transition-all shadow-[0_0_40px_rgba(236,72,153,0.3)]">Obtenir mon image gratuite</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="exemples" class="py-32 bg-[#0d0208]/50">
+            <div class="max-w-7xl mx-auto px-6 text-center">
+                <h2 class="text-5xl font-black mb-24 uppercase tracking-tighter">Portfolio Créatif</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    
+                    <div class="portfolio-card aspect-[4/5] glass rounded-[35px] group relative">
+                        <img src="https://res.cloudinary.com/ddhsgedwn/image/upload/v1735059639/Capture-d_e%CC%81cran-2025-12-24-175538_zztofr.jpg" 
+                             alt="Gastro IA" 
+                             class="w-full h-full object-cover rounded-[35px] block">
+                        <div class="portfolio-overlay absolute inset-0 flex flex-col items-center justify-end p-8 text-center rounded-[35px]">
+                            <div class="text-pink-500 text-xs font-black mb-2 tracking-widest uppercase">Gastro IA</div>
+                            <p class="text-[10px] text-white uppercase tracking-widest opacity-70">Photographie culinaire haute couture</p>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-card aspect-[4/5] glass rounded-[35px] group relative">
+                        <img src="https://res.cloudinary.com/ddhsgedwn/image/upload/v1735059640/Capture-d_e%CC%81cran-2025-12-24-175625_grrvb6.jpg" 
+                             alt="Identity" 
+                             class="w-full h-full object-cover rounded-[35px] block">
+                        <div class="portfolio-overlay absolute inset-0 flex flex-col items-center justify-end p-8 text-center rounded-[35px]">
+                            <div class="text-pink-500 text-xs font-black mb-2 tracking-widest uppercase">Identity</div>
+                            <p class="text-[10px] text-white uppercase tracking-widest opacity-70">Design de logos intemporels</p>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-card aspect-[4/5] glass rounded-[35px] group relative">
+                        <img src="https://res.cloudinary.com/ddhsgedwn/image/upload/v1735059639/Capture-d_e%CC%81cran-2025-12-24-175510_ksdbau.jpg" 
+                             alt="Marketing" 
+                             class="w-full h-full object-cover rounded-[35px] block">
+                        <div class="portfolio-overlay absolute inset-0 flex flex-col items-center justify-end p-8 text-center rounded-[35px]">
+                            <div class="text-pink-500 text-xs font-black mb-2 tracking-widest uppercase">Marketing</div>
+                            <p class="text-[10px] text-white uppercase tracking-widest opacity-70">Publicités impactantes</p>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-card aspect-[4/5] glass rounded-[35px] group relative">
+                        <img src="https://res.cloudinary.com/ddhsgedwn/image/upload/v1735059638/Capture-d_e%CC%81cran-2025-12-24-175456_u79kju.jpg" 
+                             alt="Print" 
+                             class="w-full h-full object-cover rounded-[35px] block">
+                        <div class="portfolio-overlay absolute inset-0 flex flex-col items-center justify-end p-8 text-center rounded-[35px]">
+                            <div class="text-pink-500 text-xs font-black mb-2 tracking-widest uppercase">Print</div>
+                            <p class="text-[10px] text-white uppercase tracking-widest opacity-70">Menus & Supports physiques</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <section id="contact" class="py-48 bg-black relative overflow-hidden">
+        <div class="max-w-4xl mx-auto px-6 relative z-10">
+            <div class="glass p-12 md:p-20 rounded-[80px] mb-24 border-white/5">
+                <h2 class="text-4xl md:text-5xl font-black mb-12 text-center uppercase tracking-tighter leading-none">Écrivons le futur de <br>votre restaurant</h2>
+                <form id="contact-form" action="https://formspree.io/f/xrezvarg" method="POST" class="space-y-8">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest ml-4 text-gray-500">Établissement</label>
+                            <input type="text" name="restaurant" placeholder="Le nom de votre table" required class="w-full bg-white/5 border border-white/10 p-6 rounded-[25px] outline-none focus:border-indigo-500 focus:bg-white/10 transition-all">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest ml-4 text-gray-500">Contact</label>
+                            <input type="email" name="email" placeholder="votre@email.com" required class="w-full bg-white/5 border border-white/10 p-6 rounded-[25px] outline-none focus:border-indigo-500 focus:bg-white/10 transition-all">
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black uppercase tracking-widest ml-4 text-gray-500">Offre souhaitée</label>
+                        <select name="offre" id="offre-select" required class="w-full bg-white/5 border border-white/10 p-6 rounded-[25px] outline-none focus:border-indigo-500 focus:bg-white/10 transition-all text-gray-400">
+                            </select>
+                    </div>
+                    <button type="submit" id="submitBtn" class="btn-premium w-full py-7 bg-white text-black font-black uppercase tracking-[0.3em] text-xs rounded-[25px] hover:scale-[0.98] transition-all">Envoyer la demande</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // RÉPARATION DU SCRIPT
+        const cursor = document.querySelector('.cursor');
+        const follower = document.querySelector('.cursor-follower');
+        
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            setTimeout(() => {
+                follower.style.left = e.clientX + 'px';
+                follower.style.top = e.clientY + 'px';
+            }, 50);
+        });
+
+        const brandToggle = document.getElementById('brandToggle');
+        const slider = document.getElementById('slider');
+        const brandName = document.getElementById('brandName');
+        const marketgap = document.getElementById('marketgap');
+        const logoexpanse = document.getElementById('logoexpanse');
+        const mainNav = document.getElementById('mainNav');
+        const offreSelect = document.getElementById('offre-select');
+        const labelMG = document.getElementById('labelMG');
+        const labelLE = document.getElementById('labelLE');
+
+        let isMarketGap = true;
+
+        function updateBrandIdentity() {
+            if (isMarketGap) {
+                marketgap.classList.remove('hidden-content');
+                marketgap.classList.add('visible-content');
+                logoexpanse.classList.add('hidden-content');
+                logoexpanse.classList.remove('visible-content');
+                
+                labelMG.classList.add('active');
+                labelLE.classList.remove('active');
+                slider.style.transform = 'translateX(0)';
+                slider.style.background = '#6366f1';
+                brandName.textContent = 'MARKETGAP';
+                brandName.style.color = '#6366f1';
+
+                mainNav.innerHTML = `
+                    <a href="#services" class="hover:text-white transition-all">Agent IA</a>
+                    <a href="#contact" class="text-indigo-500">Contact</a>`;
+                
+                offreSelect.innerHTML = `
+                    <option value="Starter MG">Pack Starter (149€/mois)</option>
+                    <option value="Pro MG">Pack Pro (299€/mois)</option>
+                    <option value="Audit">Audit Gratuit</option>`;
+            } else {
+                logoexpanse.classList.remove('hidden-content');
+                logoexpanse.classList.add('visible-content');
+                marketgap.classList.add('hidden-content');
+                marketgap.classList.remove('visible-content');
+
+                labelLE.classList.add('active');
+                labelMG.classList.remove('active');
+                slider.style.transform = 'translateX(100%)';
+                slider.style.background = '#ec4899';
+                brandName.textContent = 'LOGO EXPANSE';
+                brandName.style.color = '#ec4899';
+
+                mainNav.innerHTML = `
+                    <a href="#exemples" class="hover:text-white transition-all">Portfolio</a>
+                    <a href="#contact" class="text-pink-500">Contact</a>`;
+                
+                offreSelect.innerHTML = `
+                    <option value="Gratuit LE">Image Gratuite</option>
+                    <option value="Pack Expert">Pack Full Branding</option>`;
+            }
+        }
+
+        brandToggle.addEventListener('click', () => {
+            isMarketGap = !isMarketGap;
+            updateBrandIdentity();
+        });
+
+        function scrollToSection(id, val) {
+            document.getElementById(id).scrollIntoView({behavior: 'smooth'});
+            if(val) offreSelect.value = val;
+        }
+
+        // Initialisation
+        updateBrandIdentity();
+    </script>
+</body>
+</html>
